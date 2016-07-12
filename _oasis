@@ -1,0 +1,15 @@
+OASISFormat: 0.4
+Name: Osborn
+Version: 0.1.0
+Synopsis: Simple static blog generator written in OCaml.
+Authors: Antoine Luciani <antoine1fr@gmail.com>
+License: MIT
+Plugins: META (0.4), DevFiles (0.4)
+
+Executable osborn
+  Path: src
+  BuildTools: ocamlbuild
+  MainIs: osborn.ml
+  BuildDepends:
+    mustache,
+    cmdliner
