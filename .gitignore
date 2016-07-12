@@ -1,0 +1,11 @@
+*.swp
+*~
+Makefile
+configure
+_build
+_tags
+myocamlbuild.ml
+*.byte
+*.native
+setup.*
+.merlin
