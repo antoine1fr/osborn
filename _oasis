@@ -11,5 +11,8 @@ Executable osborn
   BuildTools: ocamlbuild
   MainIs: osborn.ml
   BuildDepends:
+    result,
+    sexplib,
+    ppx_sexp_conv,
     mustache,
     cmdliner
