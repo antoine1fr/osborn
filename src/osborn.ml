@@ -16,16 +16,14 @@ module Cli = struct
     let doc = "Simple static blog generator written in OCaml." in
     let man = [
       `S "BUGS";
-      `P "Email bug reports to <antoine1fr at
-      gmail dot com>."] in
+      `P "Email bug reports to <antoine1fr at gmail dot com>."] in
     Term.info "launch" ~doc ~man
 
   let info =
     let doc = "Simple static blog generator written in OCaml." in
     let man = [
       `S "BUGS";
-      `P "Email bug reports to <antoine1fr at
-      gmail dot com>."] in
+      `P "Email bug reports to <antoine1fr at gmail dot com>."] in
     Term.info "launch" ~doc ~man
 end
 
