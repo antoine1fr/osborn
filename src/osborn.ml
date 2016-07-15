@@ -1,4 +1,10 @@
-let build working_dir = ()
+open Std
+
+let build working_dir =
+  let config = working_dir ^ "/config.sexp"
+    |> Conf.from_file
+    |> Result.get_ok ~default:Conf.default in
+  ()
 
 module Cli = struct
   open Cmdliner
