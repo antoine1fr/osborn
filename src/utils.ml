@@ -51,3 +51,23 @@ let write_file path content =
     | None -> ());
     let msg = Printexc.to_string exn in
     Error msg
+
+let get_folder_content path =
+  let handle_ref = ref None in
+  try
+    let handle = Unix.opendir path in
+    let rec loop accu =
+      try
+        let entry = Unix.readdir handle in
+        loop (entry :: accu)
+      with End_of_file -> accu
+    in
+    let entries = loop [] in
+    Unix.closedir handle;
+    Ok entries
+  with exn ->
+    (match !handle_ref with
+    | Some handle -> Unix.closedir handle
+    | None -> ());
+    let msg = Printexc.to_string exn in
+    Error msg
