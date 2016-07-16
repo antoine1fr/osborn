@@ -12,6 +12,7 @@ module Result : sig
   val error : 'err -> (_, 'err) t
   val bind : ('a, 'err) t -> ('a -> ('b, 'err) t) -> ('b, 'err) t
   val map : ('a -> 'b) -> ('a, 'err) t -> ('b, 'err) t
+
   val apply :
     ('a, 'err list) t
     -> (('a -> 'b), 'err list) t
