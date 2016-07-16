@@ -18,4 +18,5 @@ Executable osborn
     yojson,
     ppx_deriving_yojson,
     mustache,
+    omd,
     cmdliner
