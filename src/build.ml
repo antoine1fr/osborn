@@ -10,8 +10,19 @@ let process_index working_dir build_dir scope =
   let index_html = Mustache.render index_tpl scope in
   Utils.write_file (build_dir ^ "/index.html") index_html
 
+let get_posts working_dir =
+  let post_dir = working_dir ^ "/_posts" in
+  Utils.get_folder_content post_dir >>= fun post_list ->
+  post_list
+    |> List.filter (fun filename -> filename <> "." && filename <> "..")
+    |> List.filter (fun filename -> Utils.file_extension filename = "md")
+    |> List.map (fun filename -> post_dir ^ "/" ^ filename)
+    |> List.map (fun path -> {path})
+    |> Result.return
+
 let build working_dir =
   let build_dir = working_dir ^ "/_build" in
+  get_posts working_dir >>= fun posts ->
   let conf = working_dir ^ "/config.sexp"
     |> Conf.from_file
     |> Result.get_ok ~default:Conf.default in
