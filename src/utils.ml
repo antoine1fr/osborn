@@ -1,6 +1,6 @@
 open Std
 
-let rec ezjsonm_value_of_yojson : Yojson.Safe.json -> Mustache.Json.value = function
+let rec ezjsonm_value_of_yojson = function
   | `Assoc x ->
     let x' = List.map (fun (key, value) ->
       (key, ezjsonm_value_of_yojson value)) x in
@@ -14,7 +14,7 @@ let rec ezjsonm_value_of_yojson : Yojson.Safe.json -> Mustache.Json.value = func
   | `Tuple x | `List x -> `A (List.map ezjsonm_value_of_yojson x)
   | `Variant _ -> `Null
 
-let ezjsonm_of_yojson yojson : Mustache.Json.t =
+let ezjsonm_of_yojson yojson =
   match ezjsonm_value_of_yojson yojson with
   | `A x -> `A x
   | `O x -> `O x
