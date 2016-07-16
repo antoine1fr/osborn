@@ -1,15 +1,76 @@
 module Result_ = Result
 
-module Result = struct
-  include Result_
+module Result : sig
+  type ('ok, 'err) t = ('ok, 'err) Result_.result =
+    | Ok of 'ok
+    | Error of 'err
 
-  type ('ok, 'err) t = ('ok, 'err) result
+  val get_ok : ?default : 'ok -> ('ok, _) t -> 'ok
+  val get_error : (_, 'err) t -> 'err
+  val return : 'ok -> ('ok, _) t
+  val ok : 'ok -> ('ok, _) t
+  val error : 'err -> (_, 'err) t
+  val bind : ('a, 'err) t -> ('a -> ('b, 'err) t) -> ('b, 'err) t
+  val map : ('a -> 'b) -> ('a, 'err) t -> ('b, 'err) t
+  val apply :
+    ('a, 'err list) t
+    -> (('a -> 'b), 'err list) t
+    -> ('b, 'err list) t
+
+  module Infix : sig
+    val (>>=) : ('a, 'err) t -> ('a -> ('b, 'err) t) -> ('b, 'err) t
+    val (>>|) : ('a -> 'b) -> ('a, 'err) t -> ('b, 'err) t
+    val (<$>) : ('a -> 'b) -> ('a, 'err) t -> ('b, 'err) t
+    val (<*>) :
+      ('a, 'err list) t
+      -> (('a -> 'b), 'err list) t
+      -> ('b, 'err list) t
+  end
+end = struct
+  type ('ok, 'err) t = ('ok, 'err) Result_.result =
+    | Ok of 'ok
+    | Error of 'err
 
   let get_ok ?default result =
     match result, default with
     | Ok x, _ -> x
     | Error _, Some x -> x
     | Error _, None  -> failwith "get_ok"
+
+  let get_error = function
+    | Ok _ -> failwith "get_error"
+    | Error x -> x
+
+  let return x = Ok x
+  let ok = return
+  let error x = Error x
+
+  let bind result f =
+    match result with
+    | Ok x -> f x
+    | Error x -> Error x
+
+  let map f result = bind result (fun x -> Ok (f x))
+
+  let apply x_result f_result =
+    match x_result, f_result with
+    | Ok x, Ok f -> Ok (f x)
+    | Ok _, Error x -> Error x
+    | Error x, Ok _ -> Error x
+    | Error x, Error y -> Error (x @ y)
+
+  module Infix = struct
+    let (>>=) = bind
+    let (>>|) = map
+    let (<$>) = map
+    let (<*>) = apply
+  end
 end
+
+type ('ok, 'err) t = ('ok, 'err) Result.t =
+  | Ok of 'ok
+  | Error of 'err
+
+include Result.Infix
 
 include Sexplib.Std
