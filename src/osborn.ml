@@ -20,6 +20,10 @@ let ezjsonm_of_yojson yojson : Mustache.Json.t =
   | `O x -> `O x
   | x -> `A [x]
 
+type scope = {
+  conf : Conf.t;
+} [@@deriving yojson]
+
 let build working_dir =
   let config = working_dir ^ "/config.sexp"
     |> Conf.from_file
