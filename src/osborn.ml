@@ -24,6 +24,38 @@ type scope = {
   conf : Conf.t;
 } [@@deriving yojson]
 
+let read_file path =
+  let ic_ref = ref None in
+  try
+    let ic = open_in path in
+    ic_ref := Some ic;
+    let len = in_channel_length ic in
+    let str = String.make len ' ' in
+    let _ = input ic str 0 len in
+    close_in ic;
+    Ok str
+  with exn ->
+    (match !ic_ref with
+    | Some ic -> close_in ic
+    | None -> ());
+    let msg = Printexc.to_string exn in
+    Error msg
+
+let write_file path content =
+  let oc_ref = ref None in
+  try
+    let oc = open_out path in
+    oc_ref := Some oc;
+    output_string oc content;
+    close_out oc;
+    Ok ()
+  with exn ->
+    (match !oc_ref with
+    | Some oc -> close_out oc
+    | None -> ());
+    let msg = Printexc.to_string exn in
+    Error msg
+
 let build working_dir =
   let config = working_dir ^ "/config.sexp"
     |> Conf.from_file
