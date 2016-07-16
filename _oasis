@@ -14,5 +14,7 @@ Executable osborn
     result,
     sexplib,
     ppx_sexp_conv,
+    yojson,
+    ppx_deriving_yojson,
     mustache,
     cmdliner
