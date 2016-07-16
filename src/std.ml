@@ -19,6 +19,7 @@ module Result : sig
     -> ('b, 'err list) t
 
   val traverse : ('a -> ('b, 'err) t) -> 'a list -> ('b list, 'err) t
+  val sequence : ('ok, 'err) t list -> ('ok list, 'err) t
 
   module Infix : sig
     val (>>=) : ('a, 'err) t -> ('a -> ('b, 'err) t) -> ('b, 'err) t
@@ -72,6 +73,8 @@ end = struct
         | Error x -> Error x
     in
     loop [] l
+
+  let sequence l = traverse (function result -> result) l
 
   module Infix = struct
     let (>>=) = bind
