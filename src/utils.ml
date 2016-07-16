@@ -76,3 +76,8 @@ let file_extension filename =
   let regexp = Str.regexp "\\(\\.\\(.*\\)\\)?$" in
   let _ = Str.search_forward regexp filename 0 in
   Str.matched_group 2 filename
+
+let base_filename filename =
+  let regexp = Str.regexp "\\(\\.\\(.*\\)\\)?$" in
+  let i = Str.search_forward regexp filename 0 in
+  Str.string_before filename i
