@@ -25,7 +25,7 @@ let get_posts working_dir =
     |> List.filter (fun filename -> Utils.file_extension filename = "md")
     |> List.map (fun filename ->
       let base_name = Utils.base_filename filename in
-      let client_path = post_dir ^ "/" ^ base_name ^ ".html" in
+      let client_path = "_posts/" ^ base_name ^ ".html" in
       let build_path = working_dir ^  "/_build/_posts/" ^ base_name ^ ".html" in
       let source_path = working_dir ^ "/_posts/" ^ base_name ^ ".md" in
       {client_path; source_path; build_path})
