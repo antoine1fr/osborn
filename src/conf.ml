@@ -20,7 +20,7 @@ let from_file path =
     let len = in_channel_length ic in
     let str = String.make len ' ' in
     let _ = input ic str 0 len in
-    Ok (str |> Sexplib.Sexp.of_string |> t_of_sexp)
+    Ok (str |> String.trim |> Sexplib.Sexp.of_string |> t_of_sexp)
   with exn ->
     let msg = Printexc.to_string exn in
     Error msg
