@@ -5,7 +5,7 @@ type t = {
   author_name : string;
   author_email : string;
   author_twitter : string;
-} [@@deriving sexp]
+} [@@deriving sexp, yojson]
 
 let default = {
   blog_name = "My awesome blog";
