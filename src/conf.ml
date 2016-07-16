@@ -16,10 +16,7 @@ let default = {
 
 let from_file path =
   try
-    let ic = open_in path in
-    let len = in_channel_length ic in
-    let str = String.make len ' ' in
-    let _ = input ic str 0 len in
+    Utils.read_file path >>= fun str ->
     Ok (str |> String.trim |> Sexplib.Sexp.of_string |> t_of_sexp)
   with exn ->
     let msg = Printexc.to_string exn in
