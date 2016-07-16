@@ -18,6 +18,8 @@ module Result : sig
     -> (('a -> 'b), 'err list) t
     -> ('b, 'err list) t
 
+  val traverse : ('a -> ('b, 'err) t) -> 'a list -> ('b list, 'err) t
+
   module Infix : sig
     val (>>=) : ('a, 'err) t -> ('a -> ('b, 'err) t) -> ('b, 'err) t
     val (>>|) : ('a -> 'b) -> ('a, 'err) t -> ('b, 'err) t
@@ -59,6 +61,17 @@ end = struct
     | Ok _, Error x -> Error x
     | Error x, Ok _ -> Error x
     | Error x, Error y -> Error (x @ y)
+
+  let traverse f l =
+    let rec loop accu l =
+      match l with
+      | [] -> Ok accu
+      | head :: tail ->
+        match f head with
+        | Ok x -> loop (x :: accu) tail
+        | Error x -> Error x
+    in
+    loop [] l
 
   module Infix = struct
     let (>>=) = bind
