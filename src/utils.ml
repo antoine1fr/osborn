@@ -71,3 +71,8 @@ let get_folder_content path =
     | None -> ());
     let msg = Printexc.to_string exn in
     Error msg
+
+let file_extension filename =
+  let regexp = Str.regexp "\\(\\.\\(.*\\)\\)?$" in
+  let _ = Str.search_forward regexp filename 0 in
+  Str.matched_group 2 filename
