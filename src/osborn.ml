@@ -91,4 +91,7 @@ let () =
   let launch = (Cli.build, Cli.info) in
   match Cmdliner.Term.eval launch with
   | `Error msg -> exit 1
-  | _ -> exit 0
+  | `Ok (Error msg) ->
+    Printf.fprintf stderr "Fatal error: %s\n" msg;
+    exit 1
+  | `Ok (Ok ()) | `Help | `Version -> exit 0
