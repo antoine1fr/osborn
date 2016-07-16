@@ -1,7 +1,7 @@
 open Std
 
 type post = {
-  path : string;
+  client_path : string;
 } [@@deriving yojson]
 
 type scope = {
@@ -22,7 +22,7 @@ let get_posts working_dir =
     |> List.filter (fun filename -> filename <> "." && filename <> "..")
     |> List.filter (fun filename -> Utils.file_extension filename = "md")
     |> List.map (fun filename -> post_dir ^ "/" ^ filename)
-    |> List.map (fun path -> {path})
+    |> List.map (fun client_path -> {client_path})
     |> Result.return
 
 let build working_dir =
