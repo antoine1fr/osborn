@@ -4,11 +4,17 @@ type post = {
   client_path : string;
   source_path : string;
   build_path : string;
+  title : string;
 } [@@deriving yojson]
 
 type scope = {
   conf : Conf.t;
   posts : post list;
+} [@@deriving yojson]
+
+type layout_scope = {
+  conf : Conf.t;
+  post : post;
 } [@@deriving yojson]
 
 let process_index working_dir build_dir scope =
@@ -28,7 +34,7 @@ let get_posts working_dir =
       let client_path = "_posts/" ^ base_name ^ ".html" in
       let build_path = working_dir ^  "/_build/_posts/" ^ base_name ^ ".html" in
       let source_path = working_dir ^ "/_posts/" ^ base_name ^ ".md" in
-      {client_path; source_path; build_path})
+      {client_path; source_path; build_path; title = ""})
     |> Result.return
 
 exception Partial_not_found of string
@@ -51,7 +57,8 @@ let markdown_filter str =
   Ok (Omd.to_html ~pindent:true markdown)
 
 let process_post working_dir build_dir conf layout post =
-  Utils.read_file post.source_path >>= fun partial_str ->
+  Utils.read_file post.source_path >>= fun str ->
+  let (metadata, partial_str) = MetadataParser.parse str in
   let post_json = post |> post_to_yojson |> Utils.ezjsonm_value_of_yojson in
   let scope = ("post", post_json) :: Conf.to_scope conf in
   markdown_filter partial_str >>= fun mustache_str ->

@@ -91,3 +91,5 @@ type ('ok, 'err) t = ('ok, 'err) Result.t =
 include Result.Infix
 
 include Sexplib.Std
+
+(*let debug x = Printf.fprintf stderr x*)
