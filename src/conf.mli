@@ -7,3 +7,4 @@ type t = {
 
 val default : t
 val from_file : string -> (t, string) Result.result
+val to_scope : t -> (string * Mustache.Json.value) list

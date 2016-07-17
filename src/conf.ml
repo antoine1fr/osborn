@@ -21,3 +21,9 @@ let from_file path =
   with exn ->
     let msg = Printexc.to_string exn in
     Error msg
+
+let to_scope conf = [
+  ("blog_name", `String conf.blog_name);
+  ("author_name", `String conf.author_name);
+  ("author_email", `String conf.author_email);
+  ("author_twitter", `String conf.author_twitter)]
