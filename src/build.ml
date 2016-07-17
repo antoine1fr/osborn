@@ -31,23 +31,37 @@ let get_posts working_dir =
       {client_path; source_path; build_path})
     |> Result.return
 
-let mustache_filter scope str =
-  let mustache = Mustache.of_string str in
-  Mustache.render mustache scope
+exception Partial_not_found of string
+
+let mustache_filter partial scope str =
+  try
+    let mustache = str
+      |> Mustache.of_string
+      |> Mustache.expand_partials (fun name ->
+        match name with
+        | "post_content" -> partial
+        | _ -> raise (Partial_not_found name)) in
+    Ok (Mustache.render mustache scope)
+  with exn ->
+    let msg = Printexc.to_string exn in
+    Error msg
 
 let markdown_filter str =
   let markdown = Omd.of_string str in
-  Omd.to_html ~pindent:true markdown
+  Ok (Omd.to_html ~pindent:true markdown)
 
-let process_post working_dir build_dir scope post =
-  Utils.read_file post.source_path >>= fun content ->
-  let html = content
-    |> mustache_filter scope
-    |> markdown_filter in
-  Utils.write_file post.build_path html
+let process_post working_dir build_dir conf layout post =
+  Utils.read_file post.source_path >>= fun partial_str ->
+  let post_json = post |> post_to_yojson |> Utils.ezjsonm_value_of_yojson in
+  let scope = ("post", post_json) :: Conf.to_scope conf in
+  markdown_filter partial_str >>= fun mustache_str ->
+  let partial = Mustache.of_string mustache_str in
+  mustache_filter partial (`O scope) layout >>= fun html_str ->
+  Utils.write_file post.build_path html_str
 
-let process_posts working_dir build_dir scope posts =
-  Result.traverse (process_post working_dir build_dir scope) posts
+let process_posts working_dir build_dir conf posts =
+  Utils.read_file (working_dir ^ "/post-layout.html") >>= fun layout ->
+  Result.traverse (process_post working_dir build_dir conf layout) posts
 
 let build working_dir =
   let build_dir = working_dir ^ "/_build" in
@@ -57,5 +71,5 @@ let build working_dir =
     |> Result.get_ok ~default:Conf.default in
   let scope = {conf; posts} |> scope_to_yojson |> Utils.ezjsonm_of_yojson in
   process_index working_dir build_dir scope >>= fun () ->
-  process_posts working_dir build_dir scope posts >>= fun _ ->
+  process_posts working_dir build_dir conf posts >>= fun _ ->
   Result.return ()
