@@ -10,6 +10,7 @@ Executable osborn
   Path: src
   BuildTools: ocamlbuild
   MainIs: osborn.ml
+  CompiledObject: best
   BuildDepends:
     str,
     result,
