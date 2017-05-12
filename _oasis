@@ -14,6 +14,7 @@ Executable osborn
   BuildDepends:
     cmdliner,
     mustache,
+    ocaml-basics,
     omd,
     ppx_deriving_yojson,
     ppx_sexp_conv,
