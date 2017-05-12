@@ -12,12 +12,12 @@ Executable osborn
   MainIs: osborn.ml
   CompiledObject: best
   BuildDepends:
-    str,
-    result,
-    sexplib,
-    ppx_sexp_conv,
-    yojson,
-    ppx_deriving_yojson,
+    cmdliner,
     mustache,
     omd,
-    cmdliner
+    ppx_deriving_yojson,
+    ppx_sexp_conv,
+    result,
+    sexplib,
+    str,
+    yojson
