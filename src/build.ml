@@ -39,7 +39,7 @@ let mustache_filter partial scope str =
       |> Mustache.of_string
       |> Mustache.expand_partials (fun name ->
         match name with
-        | "post_content" -> partial
+        | "post_content" -> Some partial
         | _ -> raise (Partial_not_found name)) in
     Ok (Mustache.render mustache scope)
   with exn ->
