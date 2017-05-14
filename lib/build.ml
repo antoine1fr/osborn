@@ -11,6 +11,8 @@ type scope = {
   posts : post list;
 } [@@deriving yojson]
 
+let debug x = Printf.fprintf stderr x
+
 let process_index working_dir build_dir scope =
   Utils.read_file (working_dir ^ "/index.html") >>= fun index_tpl_str ->
   let index_tpl = Mustache.of_string index_tpl_str in
@@ -50,11 +52,20 @@ let markdown_filter str =
   let markdown = Omd.of_string str in
   Ok (Omd.to_html ~pindent:true markdown)
 
+let front_matter_filter str =
+  let ((_, pos), result) = FrontMatter.front_matter' (str, 0) in
+  result >>= fun front_matter ->
+  debug "Build.front_matter #1 (pos: %d)\n%!" pos;
+  let new_str = String.sub str 0 pos in
+  Result.return (new_str, front_matter)
+
 let process_post working_dir build_dir conf layout post =
   Utils.read_file post.source_path >>= fun raw_content ->
+  debug "Build.process_post #1 ('%s')\n%!" raw_content;
+  front_matter_filter raw_content >>= fun (partial_str, _) ->
   let post_json = post |> post_to_yojson |> Utils.ezjsonm_value_of_yojson in
   let scope = ("post", post_json) :: Conf.to_scope conf in
-  markdown_filter raw_content >>= fun mustache_str ->
+  markdown_filter partial_str >>= fun mustache_str ->
   let partial = Mustache.of_string mustache_str in
   mustache_filter partial (`O scope) layout >>= fun html_str ->
   Utils.write_file post.build_path html_str
