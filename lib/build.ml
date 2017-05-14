@@ -51,10 +51,10 @@ let markdown_filter str =
   Ok (Omd.to_html ~pindent:true markdown)
 
 let process_post working_dir build_dir conf layout post =
-  Utils.read_file post.source_path >>= fun partial_str ->
+  Utils.read_file post.source_path >>= fun raw_content ->
   let post_json = post |> post_to_yojson |> Utils.ezjsonm_value_of_yojson in
   let scope = ("post", post_json) :: Conf.to_scope conf in
-  markdown_filter partial_str >>= fun mustache_str ->
+  markdown_filter raw_content >>= fun mustache_str ->
   let partial = Mustache.of_string mustache_str in
   mustache_filter partial (`O scope) layout >>= fun html_str ->
   Utils.write_file post.build_path html_str
