@@ -26,6 +26,7 @@ Library osborn-lib
     Build,
     Conf,
     Parser,
+    FrontMatter,
     Std,
     Utils
   Path: lib
