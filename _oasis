@@ -50,3 +50,13 @@ Executable osborn
   Install: true
   MainIs: osborn.ml
   Path: src
+
+Executable launch_tests
+  Build$: flag(tests)
+  BuildDepends:
+    osborn-lib,
+    oUnit
+  CompiledObject: native
+  Path: tests
+  Install: false
+  MainIs: launch_tests.ml
