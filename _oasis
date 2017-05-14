@@ -5,12 +5,10 @@ Synopsis: Simple static blog generator written in OCaml.
 Authors: Antoine Luciani <antoine1fr@gmail.com>
 License: MIT
 Plugins: META (0.4), DevFiles (0.4)
+BuildTools: ocamlbuild
 
-Executable osborn
-  Path: src
-  BuildTools: ocamlbuild
-  MainIs: osborn.ml
-  CompiledObject: best
+Library osborn-lib
+  Build: true
   BuildDepends:
     cmdliner,
     mustache,
@@ -22,3 +20,31 @@ Executable osborn
     sexplib,
     str,
     yojson
+  Install: true
+  InternalModules:
+  Modules:
+    Build,
+    Conf,
+    Std,
+    Utils
+  Path: lib
+  XMETARequires:
+    cmdliner,
+    mustache,
+    ocaml-basics,
+    omd,
+    ppx_deriving_yojson,
+    ppx_sexp_conv,
+    result,
+    sexplib,
+    str,
+    yojson
+
+Executable osborn
+  Build: true
+  BuildDepends:
+    osborn-lib
+  CompiledObject: native
+  Install: true
+  MainIs: osborn.ml
+  Path: src
