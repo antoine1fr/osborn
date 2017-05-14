@@ -25,6 +25,7 @@ Library osborn-lib
   Modules:
     Build,
     Conf,
+    Parser,
     Std,
     Utils
   Path: lib
